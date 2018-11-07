@@ -1,0 +1,15 @@
+{
+  "name": "base16_scheme_selector",
+  "version": "0.0.0",
+  "description": "A simple interactive cli tool for switch between base1116 color themes.",
+  "main": "main.js",
+  "scripts": {
+    "test": "test"
+  },
+  "author": "AMCorvi <am@corvi.co>",
+  "license": "MIT",
+  "dependencies": {
+    "inquirer": "6.2.0",
+    "ramda": "0.25.0"
+  }
+}

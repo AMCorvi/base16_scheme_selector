@@ -4,12 +4,13 @@
   "description": "A simple interactive cli tool for switching between base16 shell color themes.",
   "main": "main.js",
   "scripts": {
-    "test:watch": "jest --watch",
-    "test": "jest",
     "build": "webpack --config webpack.config.js",
     "build:watch": "webpack --watch --config webpack.config.js",
     "clean": "rimraf build",
-    "start:dev": "run-p test build:watch"
+    "run:watch": "nodemon -x 'npm run build; node build/bundled_main.js' -w src",
+    "start:dev": "run-p test build:watch",
+    "test": "jest",
+    "test:watch": "jest --watch"
   },
   "author": "AMCorvi <am@corvi.co>",
   "license": "MIT",

@@ -7,15 +7,19 @@ import inquirer from "inquirer";
 
 import schemes from "./base16/schemes";
 
+const imports = { cp, inquirer, homedir };
+
 // Run the program
-main(schemes);
+main({ imports } /*import*/, schemes);
 
-
-function main(schemes) {
-  schemes() // Promise which collects a list of file name of the colro schemes
-    .then(shellFiles => schemesSelector(shellFiles)) // activate interactive terminal
+function main(options, schemes) {
+  schemes()
+    .then(shellFiles =>
+      // activate interactive terminal
+      schemesSelector(options, shellFiles)
+    )
     .catch(function(err) {
-      throw err; //terminal program upon failure
+      throw err; // terminal program upon failure
     });
 }
 
@@ -24,7 +28,7 @@ function main(schemes) {
  * which base16 color scheme they wish to use
  * @param {array} listOfSchemes a list of file names for the various base16 color schemes
  */
-function schemesSelector(listOfSchemes) {
+function schemesSelector(options, listOfSchemes) {
   const interogatives = [
     {
       type: "list", // type of menu in which to use
@@ -34,11 +38,15 @@ function schemesSelector(listOfSchemes) {
     }
   ];
 
-  inquirer.prompt(interogatives).then(res => {
+  const { imports } = options;
+  imports.inquirer.prompt(interogatives).then(res => {
     console.log(
       `Activating ~/.config/base16-shell/scripts/${res.scheme_selector}`
     );
-    return executeSchemeChange(res.scheme_selector)
+    return executeSchemeChange(
+      { imports: { cp: imports.cp, homedir: imports.homedir } },
+      res.scheme_selector
+    );
   });
 }
 
@@ -49,16 +57,17 @@ function schemesSelector(listOfSchemes) {
  * @returns {<Child_Process> } Object container of the child_process spawned to execute command
  */
 export function executeSchemeChange(options, scheme, test_command) {
+  let { homedir, cp } = options.imports;
   return cp.exec(
     test_command || `bash ${scheme}`,
     {
       cwd: options.cwd || `${homedir()}/.config/base16-shell/scripts`
     },
     (err, stdout, stderr) => {
-      if (err)  throw err;
-      else if (stderr) return console.warn("Failure of spawn process:\n", stderr);
+      if (err) throw err;
+      else if (stderr)
+        return console.warn("Failure of spawn process:\n", stderr);
       console.log(stdout);
     }
   );
 }
-
